@@ -43,18 +43,36 @@ class GameViewController: UIViewController {
         if (difference < 0) difference *= -1*/
         
         let difference: Int = abs(self.currentValue - self.targetValue)
-        let points = (difference > 0) ? 100 - difference : 1000
-        self.score += points
+        var points = 100 - difference
         
-        let message = """
-                Has marcado \(points) puntos
-        """
-        let alert = UIAlertController(title: "Resultado", message: message, preferredStyle: .alert)
-        let action = UIAlertAction(title: "Genial", style: .default, handler: nil)
+        let title: String
+        
+        switch difference {
+        case 0:
+            title = "Puntuación perfecta!!!"
+            points = Int(10 * points)
+        case 1...5:
+            title = "Casi perfecto"
+            points = Int(1.5 * Float(points))
+        case 6...12:
+            title = "Te ha faltado poco..."
+            points = Int(1.2 * Float(points))
+        default:
+            title = "Has ido lejos..."
+        }
+        
+        self.score += points
+        let message = "Has marcado \(points) puntos"
+
+        
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: "OK!", style: .default, handler: {
+            action in self.startNewRound()
+        })
         
         alert.addAction(action)
         present(alert, animated: true)
-        startNewRound()
+//        startNewRound()
     }
     
     @IBAction func sliderMoved(_ sender: UISlider) {
@@ -74,6 +92,16 @@ class GameViewController: UIViewController {
         self.targetLabel.text = "\(self.targetValue)"
         self.scoreLabel.text = "\(self.score)"
         self.roundLabel.text = "\(self.round)"
+    }
+    
+    @IBAction func startNewGame() {
+        self.resetGame()
+    }
+    
+    func resetGame() {
+        self.score = 0
+        self.round = 0
+        self.startNewRound()
     }
 }
 
