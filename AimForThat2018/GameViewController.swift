@@ -10,9 +10,15 @@ import UIKit
 
 class GameViewController: UIViewController {
     
+    var score: Int = 0
+    var round: Int = 0
     var currentValue: Int = 0
-    @IBOutlet weak var slider: UISlider!
     var targetValue: Int = 0
+    @IBOutlet weak var slider: UISlider!
+    @IBOutlet weak var targetLabel: UILabel!
+    @IBOutlet weak var scoreLabel: UILabel!
+    @IBOutlet weak var roundLabel: UILabel!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,12 +31,27 @@ class GameViewController: UIViewController {
     }
 
     @IBAction func showAlert() {
+        /*var difference: Int = 0
+        
+        if (self.currentValue > self.targetValue) {
+            difference = self.currentValue - self.targetValue
+        } else {
+            difference + self.targetValue - self.currentValue
+        }*/
+        
+        /*var difference: Int = self.currentValue - self.targetValue
+        if (difference < 0) difference *= -1*/
+        
+        let difference: Int = abs(self.currentValue - self.targetValue)
+        let points = (difference > 0) ? 100 - difference : 1000
+        self.score += points
+        
         let message = """
-                El valor del slider es \(self.currentValue)
-                El valor del objetivo es \(self.targetValue)
+                Has marcado \(points) puntos
         """
         let alert = UIAlertController(title: "Resultado", message: message, preferredStyle: .alert)
         let action = UIAlertAction(title: "Genial", style: .default, handler: nil)
+        
         alert.addAction(action)
         present(alert, animated: true)
         startNewRound()
@@ -45,6 +66,14 @@ class GameViewController: UIViewController {
         self.targetValue = 1 + Int(arc4random_uniform(100))
         self.currentValue = 50
         self.slider.value = Float(self.currentValue)
+        self.round += 1
+        updateLabels()
+    }
+    
+    func updateLabels() {
+        self.targetLabel.text = "\(self.targetValue)"
+        self.scoreLabel.text = "\(self.score)"
+        self.roundLabel.text = "\(self.round)"
     }
 }
 
